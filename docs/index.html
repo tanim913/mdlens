@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>mdlens — Markdown, already rendered</title>
+<meta name="author" content="Azizullah Tanim">
 <meta name="description" content="A quiet dark-glass Markdown viewer for Ubuntu. Opens .md files rendered, with the source one key away, live reload and a folder panel.">
 <meta property="og:title" content="mdlens — Markdown, already rendered">
 <meta property="og:description" content="A quiet dark-glass Markdown viewer for Ubuntu. Opens .md files rendered, with the source one key away.">
@@ -169,6 +170,7 @@ footer .mark img { width: 22px; height: 22px; }
 footer nav { margin-left: auto; display: flex; gap: 22px; }
 footer a { color: var(--ink-2); text-decoration: none; }
 footer a:hover { color: var(--ink); }
+footer .by { color: var(--ink); }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .glass { background: var(--rim) border-box, rgb(31 34 39) padding-box; }
@@ -284,7 +286,7 @@ footer a:hover { color: var(--ink); }
 
 <footer>
   <a class="mark" href="#top"><img src="img/icon.png" alt="" width="22" height="22">mdlens</a>
-  <span>MIT licensed. Made with Rust and Tauri.</span>
+  <span>Built by <span class="by">Azizullah Tanim</span> · <a href="mailto:tanim.aziz913@gmail.com">tanim.aziz913@gmail.com</a><br>MIT licensed. Made with Rust and Tauri.</span>
   <nav aria-label="Footer">
     <a href="https://github.com/tanim913/mdlens">GitHub</a>
     <a href="https://github.com/tanim913/mdlens/releases">Releases</a>
