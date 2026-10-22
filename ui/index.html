@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mdlens</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-view="preview" data-state="empty">
+<div class="backdrop" aria-hidden="true"></div>
+
+<header class="bar" data-tauri-drag-region>
+  <button id="side-btn" class="side-btn" aria-label="Toggle folder panel (Ctrl+B)" aria-controls="side" aria-expanded="true">
+    <svg viewBox="0 0 16 16"><rect class="fill" x="2" y="3" width="4" height="10" rx="1"/><rect x="1.5" y="2.5" width="13" height="11" rx="2"/><path d="M6.5 2.5v11"/></svg>
+  </button>
+  <div class="title" data-tauri-drag-region>
+    <span id="name" data-tauri-drag-region>mdlens</span>
+    <span id="crumb" data-tauri-drag-region></span>
+  </div>
+
+  <div class="seg" role="tablist" aria-label="View">
+    <span class="pill" aria-hidden="true"></span>
+    <button id="tab-preview" role="tab" aria-selected="true" aria-controls="preview">Preview</button>
+    <button id="tab-source" role="tab" aria-selected="false" aria-controls="source">Source</button>
+  </div>
+
+  <div class="win">
+    <button id="w-min" aria-label="Minimize"><svg viewBox="0 0 10 10"><path d="M1 5h8"/></svg></button>
+    <button id="w-max" aria-label="Maximize"><svg viewBox="0 0 10 10"><rect x="1.5" y="1.5" width="7" height="7" rx="1"/></svg></button>
+    <button id="w-close" class="close" aria-label="Close"><svg viewBox="0 0 10 10"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7"/></svg></button>
+  </div>
+</header>
+
+<nav id="side" class="side" aria-label="Folder">
+  <div class="side-head"><span id="side-name"></span></div>
+  <ul id="tree" class="tree"></ul>
+</nav>
+
+<main class="page">
+  <div class="scroll" id="scroll">
+    <article id="preview" class="prose" tabindex="-1"></article>
+    <pre id="source" class="src" tabindex="-1" hidden></pre>
+    <section id="empty" class="empty">
+      <h1 id="empty-title">Open a Markdown file</h1>
+      <p id="empty-text">Drop a <code>.md</code> file or a folder here, or press <kbd>Ctrl</kbd> <kbd>O</kbd>.</p>
+      <div class="actions">
+        <button id="open-btn" class="btn">Open file…</button>
+        <button id="open-folder-btn" class="btn">Open folder…</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+[package]
+name = "mdlens"
+version = "0.1.0"
+description = "A light Markdown viewer: opens .md files rendered, one key to the source"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/tanim913/mdlens"
+
+[build-dependencies]
+tauri-build = { version = "1", features = [] }
+
+[dependencies]
+tauri = { version = "1", features = [
+  "dialog-open", "shell-open", "protocol-asset",
+  "window-close", "window-minimize", "window-maximize", "window-unmaximize", "window-start-dragging",
+] }
+tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+comrak = { version = "0.57", default-features = false }
+notify = "8"
+serde = { version = "1", features = ["derive"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = "s"
+panic = "abort"
+strip = true
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]

@@ -1,0 +1,13 @@
+# build output
+/target
+
+# design working files (kept local)
+/PRODUCT.md
+/DESIGN*.md
+/.impeccable/
+
+# editor / OS
+.env*
+.DS_Store
+.idea/
+.vscode/
