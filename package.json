@@ -9,7 +9,8 @@
   "scripts": {
     "start": "electron .",
     "test": "node --test",
-    "dist": "electron-builder --linux deb"
+    "dist": "electron-builder --linux deb",
+    "dist:win": "electron-builder --win nsis"
   },
   "dependencies": {
     "markdown-it": "^15.0.3",
@@ -50,7 +51,21 @@
       "target": [
         "nsis"
       ],
-      "icon": "icons/icon.ico"
+      "icon": "icons/icon.ico",
+      "fileAssociations": [
+        {
+          "ext": [
+            "md",
+            "markdown"
+          ],
+          "name": "Markdown",
+          "description": "Markdown document",
+          "role": "Viewer"
+        }
+      ]
+    },
+    "nsis": {
+      "artifactName": "mdlens-${version}-setup.exe"
     }
   }
 }
