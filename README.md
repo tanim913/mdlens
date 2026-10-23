@@ -1,6 +1,6 @@
 # mdlens
 
-**Markdown, already rendered.** mdlens is a small dark-glass viewer for `.md` files on Ubuntu. Double-click a file and you are reading it, not its syntax. The source is one key away.
+**Markdown, already rendered.** mdlens is a small dark-glass viewer for `.md` files on Ubuntu, with a Windows preview. Double-click a file and you are reading it, not its syntax. The source is one key away.
 
 [Website](https://tanim913.github.io/mdlens/) · [Download](https://github.com/tanim913/mdlens/releases/latest)
 
