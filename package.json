@@ -1,0 +1,56 @@
+{
+  "name": "mdlens",
+  "version": "0.2.0",
+  "description": "A light Markdown viewer: opens .md files rendered, one key to the source",
+  "main": "main.js",
+  "license": "MIT",
+  "author": "tanim913 <42853370+tanim913@users.noreply.github.com>",
+  "homepage": "https://github.com/tanim913/mdlens",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test",
+    "dist": "electron-builder --linux deb"
+  },
+  "dependencies": {
+    "markdown-it": "^15.0.3",
+    "markdown-it-footnote": "^4.0.0",
+    "markdown-it-task-lists": "^2.1.1"
+  },
+  "devDependencies": {
+    "electron": "^44.9.3",
+    "electron-builder": "^26.15.3"
+  },
+  "desktopName": "mdlens.desktop",
+  "build": {
+    "appId": "dev.tanim.mdlens",
+    "productName": "mdlens",
+    "files": [
+      "main.js",
+      "preload.js",
+      "core.js",
+      "ui/**",
+      "icons/128x128@2x.png"
+    ],
+    "linux": {
+      "target": [
+        "deb"
+      ],
+      "category": "Utility",
+      "icon": "icons/128x128@2x.png",
+      "synopsis": "Light Markdown viewer",
+      "mimeTypes": [
+        "text/markdown",
+        "text/x-markdown",
+        "inode/directory"
+      ],
+      "executableName": "mdlens",
+      "syncDesktopName": true
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "icons/icon.ico"
+    }
+  }
+}

@@ -13,19 +13,20 @@
 - **Live reload.** Save the file in any editor and the page updates in place, keeping your scroll position.
 - **Folders.** Open a folder to get a collapsible panel of its Markdown files, starting at the README. A single file opens without the panel.
 - **Safe with untrusted files.** Raw HTML in Markdown stays escaped. Web links open in your browser; relative `.md` links open in mdlens.
-- **Light.** A 5 MB Rust binary on the system web view, one window for every file you open, and no network access except for remote images in the file itself.
+- **Works on every Ubuntu.** One `.deb` for Ubuntu 20.04, 22.04, 24.04 and newer. mdlens carries its own browser engine (Electron), so it does not depend on whichever WebKit your release ships. The cost is size: about 100 MB to download.
+- **One window.** Opening another file from the file manager reuses the window that is already open. The only network access is for remote images in the file itself.
 
 ## Install
 
-Ubuntu 20.04 or 22.04 (the app needs `libwebkit2gtk-4.0`):
+Ubuntu 20.04, 22.04, 24.04 or newer (64-bit):
 
 ```sh
-wget https://github.com/tanim913/mdlens/releases/latest/download/mdlens_0.1.0_amd64.deb
-sudo apt install ./mdlens_0.1.0_amd64.deb
+wget https://github.com/tanim913/mdlens/releases/latest/download/mdlens_0.2.0_amd64.deb
+sudo apt install ./mdlens_0.2.0_amd64.deb
 xdg-mime default mdlens.desktop text/markdown   # open .md files with mdlens by default
 ```
 
-mdlens then also appears in the file manager's **Open With** menu for Markdown files and for folders.
+mdlens then also appears in the file manager's **Open With** menu for Markdown files and for folders. Installing 0.2.0 over 0.1.0 upgrades it in place.
 
 ## Usage
 
@@ -46,22 +47,23 @@ You can also drop a file or a folder onto the window.
 
 ## Build from source
 
-```sh
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-sudo apt install build-essential pkg-config libssl-dev libgtk-3-dev libwebkit2gtk-4.0-dev librsvg2-dev
-cargo install tauri-cli --version "^1" --locked
+Needs Node.js 20 or newer.
 
-cargo test           # render and folder-tree tests
-./build-deb.sh       # builds target/release/bundle/deb/mdlens_0.1.0_amd64.deb
+```sh
+git clone https://github.com/tanim913/mdlens.git && cd mdlens
+npm ci
+npm start            # run it from the source folder
+npm test             # renderer and folder-tree tests
+npm run dist         # builds dist/mdlens_0.2.0_amd64.deb
 ```
 
-`build-deb.sh` runs `cargo tauri build` and then repacks the `.deb`, because tauri-bundler 1.x writes an invalid archive when your user ID is longer than six digits.
+The app is Electron with plain HTML, CSS and JavaScript in `ui/`. The Markdown is rendered with [markdown-it](https://github.com/markdown-it/markdown-it) (`core.js`), and `main.js` handles the window, files and live reload.
 
-The app is Tauri 1 with plain HTML, CSS and JavaScript in `ui/`; the Markdown is rendered in Rust with [comrak](https://github.com/kivikakk/comrak) (`src/render.rs`).
+Version 0.1.0 was built with Rust and Tauri 1. That build needs `libwebkit2gtk-4.0`, which Ubuntu 24.04 and later no longer ship, so 0.2.0 moved to Electron. The interface is unchanged.
 
 ## Limits
 
-- Tested on Ubuntu 20.04 only. Newer Ubuntu releases ship only WebKitGTK 4.1, which this Tauri 1 build does not use yet.
+- Built and tested on Ubuntu 20.04. The package depends only on libraries that 22.04 and 24.04+ ship, and on 24.04+ it installs an AppArmor profile so Chromium's sandbox works under the newer rules.
 - No Windows or macOS release yet.
 - Viewer only: no editing, tabs, search or table of contents.
 - The folder panel is read when the folder opens; files added later appear after reopening it.

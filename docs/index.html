@@ -213,14 +213,14 @@ footer .by { color: var(--ink); }
     <h1>Markdown, <em>already</em> rendered.</h1>
     <p class="lede">mdlens is a quiet dark-glass viewer for your <code>.md</code> files. Double-click one and you are reading it, not its syntax. The source is one key away.</p>
     <div class="cta">
-      <a class="btn primary" href="https://github.com/tanim913/mdlens/releases/latest/download/mdlens_0.1.0_amd64.deb">
+      <a class="btn primary" href="https://github.com/tanim913/mdlens/releases/latest/download/mdlens_0.2.0_amd64.deb">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8.5M4.5 7 8 10.5 11.5 7M3 13.5h10"/></svg>Download for Ubuntu
       </a>
       <a class="btn" href="https://github.com/tanim913/mdlens">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4 2.5 8 6 12M10 4l3.5 4L10 12"/></svg>View the source
       </a>
     </div>
-    <p class="meta"><span>Version 0.1.0</span><span>2.3 MB .deb</span><span>Free and open source, MIT</span></p>
+    <p class="meta"><span>Version 0.2.0</span><span>Ubuntu 20.04 to 24.04 and newer</span><span>Free and open source, MIT</span></p>
   </div>
 
   <div class="frame glass">
@@ -251,7 +251,7 @@ footer .by { color: var(--ink); }
       <div><dt>Live reload</dt><dd>Keep writing in your editor. Every save updates the page in place, and your scroll position stays put.</dd></div>
       <div><dt>Folders, like your editor</dt><dd>Open a folder and a collapsible panel lists its Markdown files, starting at the README. Open a single file and the panel stays away.</dd></div>
       <div><dt>Safe with any file</dt><dd>Raw HTML inside Markdown stays escaped, so a downloaded README cannot run scripts. Web links open in your browser.</dd></div>
-      <div><dt>Light on the machine</dt><dd>A 5 MB Rust binary on the system web view. Large files stream in, so the window never freezes.</dd></div>
+      <div><dt>Every Ubuntu release</dt><dd>mdlens brings its own browser engine, so one package installs on 20.04, 22.04, 24.04 and newer. Large files stream in, so the window never freezes.</dd></div>
       <div><dt>One window</dt><dd>Double-click another file and it opens in the window you already have, not a new one.</dd></div>
       <div><dt>Works offline</dt><dd>Fonts are bundled and nothing phones home. Local images load from the file's own folder.</dd></div>
     </dl>
@@ -273,20 +273,20 @@ footer .by { color: var(--ink); }
       <div class="term glass">
         <button class="copybtn" type="button" data-copy="cmds">Copy</button>
 <pre id="cmds"><span class="c"># download the latest release</span>
-<span class="p">$ </span>wget https://github.com/tanim913/mdlens/releases/latest/download/mdlens_0.1.0_amd64.deb
+<span class="p">$ </span>wget https://github.com/tanim913/mdlens/releases/latest/download/mdlens_0.2.0_amd64.deb
 <span class="c"># install it</span>
-<span class="p">$ </span>sudo apt install ./mdlens_0.1.0_amd64.deb
+<span class="p">$ </span>sudo apt install ./mdlens_0.2.0_amd64.deb
 <span class="c"># open .md files with mdlens by default</span>
 <span class="p">$ </span>xdg-mime default mdlens.desktop text/markdown</pre>
       </div>
-      <p class="note">Built and tested on Ubuntu 20.04. It needs <code>libwebkit2gtk-4.0</code>, which Ubuntu 20.04 and 22.04 ship; newer releases may need it built from source. Windows is not released yet.</p>
+      <p class="note">One package for Ubuntu 20.04, 22.04, 24.04 and newer (64-bit). The download is about 100 MB because mdlens carries its own browser engine. Installing it over 0.1.0 upgrades in place. Windows is not released yet.</p>
     </div>
   </section>
 </main>
 
 <footer>
   <a class="mark" href="#top"><img src="img/icon.png" alt="" width="22" height="22">mdlens</a>
-  <span>Built by <span class="by">Azizullah Tanim</span> · <a href="mailto:tanim.aziz913@gmail.com">tanim.aziz913@gmail.com</a><br>MIT licensed. Made with Rust and Tauri.</span>
+  <span>Built by <span class="by">Azizullah Tanim</span> · <a href="mailto:tanim.aziz913@gmail.com">tanim.aziz913@gmail.com</a><br>MIT licensed. Made with Electron and markdown-it.</span>
   <nav aria-label="Footer">
     <a href="https://github.com/tanim913/mdlens">GitHub</a>
     <a href="https://github.com/tanim913/mdlens/releases">Releases</a>

@@ -3,19 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' mdfile: https: data:; style-src 'self' 'unsafe-inline'">
 <title>mdlens</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body data-view="preview" data-state="empty">
 <div class="backdrop" aria-hidden="true"></div>
 
-<header class="bar" data-tauri-drag-region>
+<header class="bar">
   <button id="side-btn" class="side-btn" aria-label="Toggle folder panel (Ctrl+B)" aria-controls="side" aria-expanded="true">
     <svg viewBox="0 0 16 16"><rect class="fill" x="2" y="3" width="4" height="10" rx="1"/><rect x="1.5" y="2.5" width="13" height="11" rx="2"/><path d="M6.5 2.5v11"/></svg>
   </button>
-  <div class="title" data-tauri-drag-region>
-    <span id="name" data-tauri-drag-region>mdlens</span>
-    <span id="crumb" data-tauri-drag-region></span>
+  <div class="title">
+    <span id="name">mdlens</span>
+    <span id="crumb"></span>
   </div>
 
   <div class="seg" role="tablist" aria-label="View">

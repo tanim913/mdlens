@@ -1,7 +1,6 @@
 "use strict";
-const T = window.__TAURI__;
-const { invoke, convertFileSrc } = T.tauri;
-const win = T.window.appWindow;
+const T = window.mdlens;
+const { invoke } = T;
 const $ = (id) => document.getElementById(id);
 const body = document.body, scroller = $("scroll"), preview = $("preview"), source = $("source");
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -49,11 +48,11 @@ function fixMedia(root, dir) {
   for (const img of root.querySelectorAll("img")) {
     const src = img.getAttribute("src") || "";
     if (/^(https?:|data:)/i.test(src)) continue;
-    try { img.src = convertFileSrc(dir + "/" + decodeURIComponent(src)); } catch { /* malformed escape: leave broken */ }
+    try { img.src = "mdfile://f/" + encodeURIComponent(dir + "/" + decodeURIComponent(src)); } catch { /* malformed escape: leave broken */ }
   }
 }
 
-// WebKitGTK 2.38 lays out roughly 1 ms per block, so a big file arrives in slices instead of freezing the window.
+// A big file arrives in slices instead of freezing the window while it lays out.
 function fill(el, html, dir, done) {
   const job = el.fillJob = (el.fillJob || 0) + 1, tpl = document.createElement("template");
   tpl.innerHTML = html;
@@ -112,12 +111,12 @@ function setView(view) {
 }
 
 async function pick() {
-  const path = await T.dialog.open({ multiple: false, filters: [{ name: "Markdown", extensions: ["md", "markdown", "mdown", "txt"] }] });
+  const path = await invoke("pick", { directory: false });
   if (path) openAny(path);
 }
 
 async function pickFolder() {
-  const path = await T.dialog.open({ directory: true });
+  const path = await invoke("pick", { directory: true });
   if (path) openAny(path);
 }
 
@@ -203,9 +202,9 @@ treeEl.addEventListener("click", (e) => {
   const b = e.target.closest("button.file");
   if (b) open(b.dataset.path);
 });
-$("w-min").onclick = () => win.minimize();
-$("w-max").onclick = () => win.toggleMaximize();
-$("w-close").onclick = () => win.close();
+$("w-min").onclick = () => T.win("minimize");
+$("w-max").onclick = () => T.win("toggleMaximize");
+$("w-close").onclick = () => T.win("close");
 
 addEventListener("keydown", (e) => {
   if (!(e.ctrlKey || e.metaKey)) return;
@@ -229,7 +228,7 @@ preview.addEventListener("click", (e) => {
     const t = document.getElementById(decodeURIComponent(href.slice(1)));
     if (t) t.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
   } else if (/^(https?:|mailto:)/i.test(href)) {
-    T.shell.open(href);
+    invoke("open_external", { url: href });
   } else if (cur && /\.(md|markdown|mdown)([?#].*)?$/i.test(href)) {
     open(decodeURIComponent(href.replace(/[?#].*$/, "")), cur.dir);
   }
@@ -237,13 +236,16 @@ preview.addEventListener("click", (e) => {
 
 let reloadTimer;
 // A save fires several fs events; reload once after they settle.
-T.event.listen("file-changed", () => { clearTimeout(reloadTimer); reloadTimer = setTimeout(() => cur && open(cur.path), 80); });
-T.event.listen("open-file", (e) => openAny(e.payload));
-T.event.listen("tauri://file-drop-hover", () => body.classList.add("dragging"));
-T.event.listen("tauri://file-drop-cancelled", () => body.classList.remove("dragging"));
-T.event.listen("tauri://file-drop", (e) => {
+T.listen("file-changed", () => { clearTimeout(reloadTimer); reloadTimer = setTimeout(() => cur && open(cur.path), 80); });
+T.listen("open-file", openAny);
+// preventDefault on dragover/drop stops the window from navigating to the dropped file.
+addEventListener("dragover", (e) => { e.preventDefault(); body.classList.add("dragging"); });
+addEventListener("dragleave", (e) => { if (!e.relatedTarget) body.classList.remove("dragging"); });
+addEventListener("drop", (e) => {
+  e.preventDefault();
   body.classList.remove("dragging");
-  if (e.payload.length) openAny(e.payload[0]);
+  const f = e.dataTransfer.files[0];
+  if (f) openAny(T.pathForFile(f));
 });
 
 invoke("initial_file").then((p) => p && openAny(p));

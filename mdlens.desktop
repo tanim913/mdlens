@@ -1,9 +1,0 @@
-[Desktop Entry]
-Categories={{categories}}
-Comment={{comment}}
-Exec={{exec}} %f
-Icon={{icon}}
-Name={{name}}
-MimeType=text/markdown;text/x-markdown;inode/directory;
-Terminal=false
-Type=Application

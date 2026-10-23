@@ -52,12 +52,13 @@ body {
 
 ::selection { background: rgb(148 204 243 / 0.35); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
-button { font: inherit; color: inherit; background: none; border: 0; cursor: default; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: default; -webkit-app-region: no-drag; }
 
 /* ---------- titlebar ---------- */
 .bar {
   position: fixed; inset: 0 0 auto 0; height: var(--bar-h); z-index: 3;
   display: flex; align-items: center; gap: 12px; padding: 0 0 0 16px;
+  -webkit-app-region: drag;
   background: var(--glass-bar);
   border-bottom: 1px solid var(--edge);
   box-shadow: inset 0 1px 0 var(--edge-top), 0 8px 24px -12px rgb(0 0 0 / 0.5);

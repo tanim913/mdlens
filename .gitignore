@@ -1,5 +1,6 @@
-# build output
-/target
+# build output and dependencies
+/node_modules
+/dist
 
 # design working files (kept local)
 /PRODUCT.md
