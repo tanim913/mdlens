@@ -6,4 +6,5 @@ contextBridge.exposeInMainWorld("mdlens", {
   win: (action) => ipcRenderer.send("win", action),
   listen: (channel, fn) => ipcRenderer.on(channel, (_e, payload) => fn(payload)),
   pathForFile: (file) => webUtils.getPathForFile(file),
+  platform: process.platform,
 });

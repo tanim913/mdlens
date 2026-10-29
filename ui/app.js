@@ -1,5 +1,6 @@
 "use strict";
 const T = window.mdlens;
+if (T.platform === "darwin") document.body.dataset.mac = "";
 const { invoke } = T;
 // App elements are looked up once, before a document's own ids (headings, raw HTML) can shadow them.
 const ui = Object.fromEntries([...document.querySelectorAll("[id]")].map((e) => [e.id, e]));

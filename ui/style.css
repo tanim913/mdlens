@@ -90,6 +90,9 @@ body[data-view="source"] .pill { transform: translateX(100%); }
 body[data-state="empty"] .seg { opacity: 0.4; pointer-events: none; }
 
 .win { display: flex; height: 100%; }
+/* macOS draws its own window buttons at the top left (main.js), so ours go and the bar makes room. */
+body[data-mac] .win { display: none; }
+body[data-mac] .bar { padding: 0 16px 0 84px; }
 .win button { width: 46px; display: grid; place-items: center; transition: background 150ms; }
 .win svg { width: 10px; height: 10px; fill: none; stroke: var(--ink-2); stroke-width: 1.1; stroke-linecap: round; }
 .win button:hover { background: rgb(255 255 255 / 0.1); }

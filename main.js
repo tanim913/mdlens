@@ -118,7 +118,9 @@ if (!app.requestSingleInstanceLock()) {
 
     win = new BrowserWindow({
       title: "mdlens", width: 960, height: 740, minWidth: 480, minHeight: 360,
-      frame: false, show: false, backgroundColor: "#0d1013",
+      show: false, backgroundColor: "#0d1013",
+      // macOS keeps its own traffic-light buttons inside the glass bar; elsewhere the bar draws its own.
+      ...(process.platform === "darwin" ? { titleBarStyle: "hidden", trafficLightPosition: { x: 16, y: 15 } } : { frame: false }),
       icon: path.join(__dirname, "icons/128x128@2x.png"),
       webPreferences: { preload: path.join(__dirname, "preload.js"), sandbox: true, contextIsolation: true },
     });
