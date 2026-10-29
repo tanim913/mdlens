@@ -1,4 +1,4 @@
-# Builds the Ubuntu .deb and the Windows installer, and attaches both to the release for package.json's version.
+# Builds the Ubuntu .deb, the Windows installer and the macOS .dmg files, and attaches them to the release for package.json's version.
 name: Build
 
 on:
@@ -21,6 +21,9 @@ jobs:
           - os: windows-latest
             target: --win nsis
             files: dist/*.exe
+          - os: macos-latest
+            target: --mac dmg
+            files: dist/*.dmg
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4

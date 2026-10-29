@@ -1,6 +1,6 @@
 # mdlens
 
-**Markdown, already rendered.** mdlens is a small dark-glass viewer for `.md` files on Ubuntu, with a Windows preview. Double-click a file and you are reading it, not its syntax. The source is one key away, and you can edit it there.
+**Markdown, already rendered.** mdlens is a small dark-glass viewer for `.md` files on Ubuntu, with Windows and macOS previews. Double-click a file and you are reading it, not its syntax. The source is one key away, and you can edit it there.
 
 [Website](https://tanim913.github.io/mdlens/) · [Download](https://github.com/tanim913/mdlens/releases/latest)
 
@@ -29,6 +29,8 @@ xdg-mime default mdlens.desktop text/markdown   # open .md files with mdlens by 
 ```
 
 mdlens then also appears in the file manager's **Open With** menu for Markdown files and for folders. Installing 0.3.0 over an older version upgrades it in place.
+
+macOS 11 or newer (untested so far): download [mdlens-0.3.0-arm64.dmg](https://github.com/tanim913/mdlens/releases/latest/download/mdlens-0.3.0-arm64.dmg) for Apple Silicon (M1 and later) or [mdlens-0.3.0-x64.dmg](https://github.com/tanim913/mdlens/releases/latest/download/mdlens-0.3.0-x64.dmg) for Intel, and drag mdlens to Applications. It is not signed with an Apple certificate, so the first launch is blocked: open **System Settings → Privacy & Security** and click **Open Anyway** (or run `xattr -cr /Applications/mdlens.app`). On macOS the shortcuts use `Cmd` as well as `Ctrl`.
 
 Windows 10 or 11 (64-bit, untested so far): download [mdlens-0.3.0-setup.exe](https://github.com/tanim913/mdlens/releases/latest/download/mdlens-0.3.0-setup.exe) and run it. The installer is not code-signed, so SmartScreen shows "Windows protected your PC": choose **More info**, then **Run anyway**. mdlens installs for your user only and registers itself for `.md` files; pick it under **Open with** to make it the default.
 
@@ -60,7 +62,7 @@ git clone https://github.com/tanim913/mdlens.git && cd mdlens
 npm ci
 npm start            # run it from the source folder
 npm test             # renderer and folder-tree tests
-npm run dist         # builds dist/mdlens_0.3.0_amd64.deb (CI builds it too, with the Windows .exe)
+npm run dist         # builds dist/mdlens_0.3.0_amd64.deb (CI builds it too, with the Windows .exe and macOS .dmg)
 ```
 
 The app is Electron with plain HTML, CSS and JavaScript in `ui/`. The Markdown is rendered with [markdown-it](https://github.com/markdown-it/markdown-it) (`core.js`), and `main.js` handles the window, files and live reload.
@@ -70,7 +72,7 @@ Version 0.1.0 was built with Rust and Tauri 1. That build needs `libwebkit2gtk-4
 ## Limits
 
 - Built and tested on Ubuntu 20.04. The package depends only on libraries that 22.04 and 24.04+ ship, and on 24.04+ it installs an AppArmor profile so Chromium's sandbox works under the newer rules.
-- The Windows build comes from CI and has not been tested on a Windows machine yet. No macOS release.
+- The Windows and macOS builds come from CI and have not been tested on those systems yet. Neither is code-signed.
 - The editor is plain: no syntax colours, find, tabs or table of contents. Typing gets sluggish in files over about 500 KB.
 - The folder panel is read when the folder opens; files added later appear after reopening it.
 

@@ -10,6 +10,8 @@ let win = null;
 let watch = null;
 /** The open file: the only path `save` may write. */
 let current = null;
+/** A file macOS handed over before the window could take it. */
+let pending = null;
 /** Folders of opened files: relative images are served from these only. */
 const allowed = new Set();
 
@@ -79,8 +81,16 @@ if (!app.requestSingleInstanceLock()) {
     }
   });
 
+  // macOS opens files (double-click, Open With) with an event, not on the command line.
+  app.on("open-file", (e, p) => {
+    e.preventDefault();
+    if (win && !win.webContents.isLoading()) win.webContents.send("open-file", p);
+    else pending = p;
+  });
+
   // No menu: its default accelerators (reload, zoom) would fight the app's own shortcuts.
-  Menu.setApplicationMenu(null);
+  // macOS routes Cmd+C/V/X/Z and Cmd+Q through the menu, so it keeps the app and Edit menus.
+  Menu.setApplicationMenu(process.platform === "darwin" ? Menu.buildFromTemplate([{ role: "appMenu" }, { role: "editMenu" }]) : null);
 
   app.whenReady().then(() => {
     protocol.handle("mdfile", serveImage);
@@ -92,7 +102,7 @@ if (!app.requestSingleInstanceLock()) {
       if (p !== current) throw new Error(`${p}: not the open file`);
       try { fs.writeFileSync(p, raw); } catch (e) { throw fail(p, e); }
     });
-    ipcMain.handle("initial_file", () => initial);
+    ipcMain.handle("initial_file", () => initial ?? pending);
     ipcMain.handle("pick", async (_e, { directory }) => {
       const r = await dialog.showOpenDialog(win, directory
         ? { properties: ["openDirectory"] }

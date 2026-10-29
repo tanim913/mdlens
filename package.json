@@ -10,7 +10,8 @@
     "start": "electron .",
     "test": "node --test",
     "dist": "electron-builder --linux deb",
-    "dist:win": "electron-builder --win nsis"
+    "dist:win": "electron-builder --win nsis",
+    "dist:mac": "electron-builder --mac dmg"
   },
   "dependencies": {
     "dompurify": "^3.4.17",
@@ -67,6 +68,33 @@
     },
     "nsis": {
       "artifactName": "mdlens-${version}-setup.exe"
+    },
+    "afterPack": "build-scripts/adhoc-sign.js",
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icons/icon.png",
+      "category": "public.app-category.productivity",
+      "identity": null,
+      "artifactName": "mdlens-${version}-${arch}.${ext}",
+      "fileAssociations": [
+        {
+          "ext": [
+            "md",
+            "markdown"
+          ],
+          "name": "Markdown",
+          "description": "Markdown document",
+          "role": "Viewer"
+        }
+      ]
     }
   }
 }
