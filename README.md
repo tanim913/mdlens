@@ -60,7 +60,7 @@ git clone https://github.com/tanim913/mdlens.git && cd mdlens
 npm ci
 npm start            # run it from the source folder
 npm test             # renderer and folder-tree tests
-npm run dist         # builds dist/mdlens_0.3.0_amd64.deb
+npm run dist         # builds dist/mdlens_0.3.0_amd64.deb (CI builds it too, with the Windows .exe)
 ```
 
 The app is Electron with plain HTML, CSS and JavaScript in `ui/`. The Markdown is rendered with [markdown-it](https://github.com/markdown-it/markdown-it) (`core.js`), and `main.js` handles the window, files and live reload.

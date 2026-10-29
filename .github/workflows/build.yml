@@ -1,0 +1,48 @@
+# Builds the Ubuntu .deb and the Windows installer, and attaches both to the release for package.json's version.
+name: Build
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["docs/**", "*.md"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: --linux deb
+            files: dist/*.deb
+          - os: windows-latest
+            target: --win nsis
+            files: dist/*.exe
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npx electron-builder ${{ matrix.target }} --publish never
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mdlens-${{ runner.os }}
+          path: ${{ matrix.files }}
+      - name: Attach to the release, if it exists
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v$(node -p "require('./package.json').version")"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" ${{ matrix.files }} --clobber
+          else
+            echo "No release $tag yet; the build is in this run's artifacts."
+          fi
