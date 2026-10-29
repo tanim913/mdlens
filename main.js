@@ -8,6 +8,8 @@ const { render, walk } = require("./core");
 let win = null;
 /** The currently watched file and its watcher; replaced when another file is opened. */
 let watch = null;
+/** The open file: the only path `save` may write. */
+let current = null;
 /** Folders of opened files: relative images are served from these only. */
 const allowed = new Set();
 
@@ -29,6 +31,7 @@ function load({ path: file, base }) {
   try { bytes = fs.readFileSync(p); } catch (e) { throw fail(p, e); }
   const dir = path.dirname(p);
   allowed.add(dir);
+  current = p;
 
   if (watch?.path !== p) {
     watch?.watcher.close();
@@ -84,6 +87,11 @@ if (!app.requestSingleInstanceLock()) {
     const initial = fileArg(process.argv, process.cwd());
     ipcMain.handle("load", (_e, a) => load(a));
     ipcMain.handle("tree", (_e, a) => tree(a));
+    ipcMain.handle("render", (_e, { raw }) => render(raw));
+    ipcMain.handle("save", (_e, { path: p, raw }) => {
+      if (p !== current) throw new Error(`${p}: not the open file`);
+      try { fs.writeFileSync(p, raw); } catch (e) { throw fail(p, e); }
+    });
     ipcMain.handle("initial_file", () => initial);
     ipcMain.handle("pick", async (_e, { directory }) => {
       const r = await dialog.showOpenDialog(win, directory
@@ -107,6 +115,14 @@ if (!app.requestSingleInstanceLock()) {
     win.webContents.on("will-navigate", (e) => e.preventDefault());
     win.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
     win.once("ready-to-show", () => win.show());
+    // The window blocks closing while the source has unsaved edits; ask before dropping them.
+    win.webContents.on("will-prevent-unload", (e) => {
+      const r = dialog.showMessageBoxSync(win, {
+        type: "question", buttons: ["Close without saving", "Cancel"], defaultId: 1, cancelId: 1,
+        message: "Close without saving?", detail: "Your edits to the source have not been saved.",
+      });
+      if (r === 0) e.preventDefault();
+    });
     win.loadFile(path.join(__dirname, "ui/index.html"));
   });
 

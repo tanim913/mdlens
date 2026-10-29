@@ -211,19 +211,19 @@ footer .by { color: var(--ink); }
 <main id="top">
   <div class="hero">
     <h1>Markdown, <em>already</em> rendered.</h1>
-    <p class="lede">mdlens is a quiet dark-glass viewer for your <code>.md</code> files. Double-click one and you are reading it, not its syntax. The source is one key away.</p>
+    <p class="lede">mdlens is a quiet dark-glass viewer for your <code>.md</code> files. Double-click one and you are reading it, not its syntax. The source is one key away, and you can edit it there.</p>
     <div class="cta">
-      <a class="btn primary" href="https://github.com/tanim913/mdlens/releases/latest/download/mdlens_0.2.0_amd64.deb">
+      <a class="btn primary" href="https://github.com/tanim913/mdlens/releases/latest/download/mdlens_0.3.0_amd64.deb">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8.5M4.5 7 8 10.5 11.5 7M3 13.5h10"/></svg>Download for Ubuntu
       </a>
-      <a class="btn" href="https://github.com/tanim913/mdlens/releases/latest/download/mdlens-0.2.0-setup.exe">
+      <a class="btn" href="https://github.com/tanim913/mdlens/releases/latest/download/mdlens-0.3.0-setup.exe">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8.5M4.5 7 8 10.5 11.5 7M3 13.5h10"/></svg>Windows (preview)
       </a>
       <a class="btn" href="https://github.com/tanim913/mdlens">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4 2.5 8 6 12M10 4l3.5 4L10 12"/></svg>View the source
       </a>
     </div>
-    <p class="meta"><span>Version 0.2.0</span><span>Ubuntu 20.04 to 24.04 and newer</span><span>Free and open source, MIT</span></p>
+    <p class="meta"><span>Version 0.3.0</span><span>Ubuntu 20.04 to 24.04 and newer</span><span>Free and open source, MIT</span></p>
   </div>
 
   <div class="frame glass">
@@ -234,7 +234,7 @@ footer .by { color: var(--ink); }
     <div class="row">
       <div class="copy">
         <h2>Opens rendered. Stays out of the way.</h2>
-        <p>Your file manager hands mdlens a <code>.md</code> file and it opens as a page: <strong>tables, task lists, footnotes, code and images</strong>, set in Literata on a single calm column. No editor to wait for, no preview pane to toggle.</p>
+        <p>Your file manager hands mdlens a <code>.md</code> file and it opens as a page: <strong>tables, task lists, footnotes, code and images</strong>, set in Literata on a calm glass page. <kbd>Ctrl</kbd> <kbd>]</kbd> and <kbd>Ctrl</kbd> <kbd>[</kbd> make it as wide or narrow as you like.</p>
       </div>
       <div class="shot glass"><img src="img/file.webp" width="1360" height="860" loading="lazy" alt="A single Markdown file rendered in mdlens, centred on a frosted glass page over a soft blue and violet backdrop."></div>
     </div>
@@ -242,7 +242,7 @@ footer .by { color: var(--ink); }
     <div class="row flip">
       <div class="copy">
         <h2>The source is one key away.</h2>
-        <p>Press <kbd>Ctrl</kbd> <kbd>/</kbd> and the same file turns into its read-only source, with line numbers and fenced code picked out. Press it again and you are back where you were.</p>
+        <p>Press <kbd>Ctrl</kbd> <kbd>/</kbd> and the same file turns into its source, with line numbers. Fix a typo, press it again and the page shows the change. <kbd>Ctrl</kbd> <kbd>S</kbd> saves it.</p>
       </div>
       <div class="shot glass"><img src="img/source.webp" width="1360" height="860" loading="lazy" alt="The Source view of the same file, showing the raw Markdown with line numbers."></div>
     </div>
@@ -253,7 +253,7 @@ footer .by { color: var(--ink); }
     <dl class="list">
       <div><dt>Live reload</dt><dd>Keep writing in your editor. Every save updates the page in place, and your scroll position stays put.</dd></div>
       <div><dt>Folders, like your editor</dt><dd>Open a folder and a collapsible panel lists its Markdown files, starting at the README. Open a single file and the panel stays away.</dd></div>
-      <div><dt>Safe with any file</dt><dd>Raw HTML inside Markdown stays escaped, so a downloaded README cannot run scripts. Web links open in your browser.</dd></div>
+      <div><dt>Safe with any file</dt><dd>HTML inside Markdown, like a side-by-side table, renders after it is sanitized, so a downloaded README cannot run scripts. Web links open in your browser.</dd></div>
       <div><dt>Every Ubuntu release</dt><dd>mdlens brings its own browser engine, so one package installs on 20.04, 22.04, 24.04 and newer. Large files stream in, so the window never freezes.</dd></div>
       <div><dt>One window</dt><dd>Double-click another file and it opens in the window you already have, not a new one.</dd></div>
       <div><dt>Works offline</dt><dd>Fonts are bundled and nothing phones home. Local images load from the file's own folder.</dd></div>
@@ -266,23 +266,25 @@ footer .by { color: var(--ink); }
       <p>Download the package, install it with apt, and make mdlens the default for Markdown files. After that, a double-click is all it takes.</p>
       <table class="keys" aria-label="Keyboard shortcuts">
         <tr><td><kbd>Ctrl</kbd> <kbd>/</kbd></td><td>Preview or Source</td></tr>
+        <tr><td><kbd>Ctrl</kbd> <kbd>S</kbd></td><td>Save your edits</td></tr>
         <tr><td><kbd>Ctrl</kbd> <kbd>O</kbd></td><td>Open a file</td></tr>
         <tr><td><kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>O</kbd></td><td>Open a folder</td></tr>
         <tr><td><kbd>Ctrl</kbd> <kbd>B</kbd></td><td>Show or hide the folder panel</td></tr>
         <tr><td><kbd>Ctrl</kbd> <kbd>+</kbd> <kbd>−</kbd> <kbd>0</kbd></td><td>Zoom the page</td></tr>
+        <tr><td><kbd>Ctrl</kbd> <kbd>]</kbd> <kbd>[</kbd></td><td>Wider or narrower page</td></tr>
       </table>
     </div>
     <div>
       <div class="term glass">
         <button class="copybtn" type="button" data-copy="cmds">Copy</button>
 <pre id="cmds"><span class="c"># download the latest release</span>
-<span class="p">$ </span>wget https://github.com/tanim913/mdlens/releases/latest/download/mdlens_0.2.0_amd64.deb
+<span class="p">$ </span>wget https://github.com/tanim913/mdlens/releases/latest/download/mdlens_0.3.0_amd64.deb
 <span class="c"># install it</span>
-<span class="p">$ </span>sudo apt install ./mdlens_0.2.0_amd64.deb
+<span class="p">$ </span>sudo apt install ./mdlens_0.3.0_amd64.deb
 <span class="c"># open .md files with mdlens by default</span>
 <span class="p">$ </span>xdg-mime default mdlens.desktop text/markdown</pre>
       </div>
-      <p class="note">One package for Ubuntu 20.04, 22.04, 24.04 and newer (64-bit). The download is about 100 MB because mdlens carries its own browser engine. Installing it over 0.1.0 upgrades in place. A Windows installer (preview, not yet tested on Windows) is on the releases page.</p>
+      <p class="note">One package for Ubuntu 20.04, 22.04, 24.04 and newer (64-bit). The download is about 100 MB because mdlens carries its own browser engine. Installing it over an older version upgrades in place. A Windows installer (preview, not yet tested on Windows) is on the releases page.</p>
     </div>
   </section>
 </main>

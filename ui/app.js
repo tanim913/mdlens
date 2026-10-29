@@ -1,14 +1,18 @@
 "use strict";
 const T = window.mdlens;
 const { invoke } = T;
-const $ = (id) => document.getElementById(id);
+// App elements are looked up once, before a document's own ids (headings, raw HTML) can shadow them.
+const ui = Object.fromEntries([...document.querySelectorAll("[id]")].map((e) => [e.id, e]));
+const $ = (id) => ui[id];
 const body = document.body, scroller = $("scroll"), preview = $("preview"), source = $("source");
+const editor = $("editor"), gutter = $("gutter");
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-let cur = null; // { path, dir, raw }
+let cur = null; // { path, dir, name, raw, text (raw with \n endings), crlf }
 let folder = null; // the open folder's tree, or null in single-file mode
 const treeEl = $("tree");
-let sourceStale = true;
+let previewStale = false; // the source was edited since the preview was drawn
+let lines = 0;
 let toastTimer;
 
 function toast(msg) {
@@ -29,19 +33,34 @@ function showError(title, text) {
   $("crumb").textContent = "";
 }
 
-const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+// Main sends "<full path>: <reason> (os error N)"; the file name and reason are what a reader needs.
+const why = (e) => String(e).replace(/^.*: /, "").replace(/ \(os error \d+\)$/, "");
 
-function renderSource(raw) {
-  let fence = false;
-  fill(source, raw.split("\n").map((line) => {
-    let cls = "";
-    if (/^\s*(```|~~~)/.test(line)) { fence = !fence; cls = " f"; }
-    else if (fence) cls = " c";
-    else if (/^#{1,6}\s/.test(line)) cls = " h";
-    else if (line.startsWith(">")) cls = " q";
-    return `<span class="l${cls}">${esc(line) || " "}</span>`;
-  }).join(""), null, () => {});
-  sourceStale = false;
+const dirty = () => !!cur && editor.value !== cur.text;
+
+function edited() {
+  const n = editor.value.split("\n").length;
+  if (n !== lines) gutter.textContent = Array.from({ length: (lines = n) }, (_, i) => i + 1).join("\n");
+  previewStale = true;
+  if (dirty()) body.dataset.dirty = ""; else delete body.dataset.dirty;
+}
+
+/** True when it is fine to replace the open file: no edits, or the reader agreed to drop them. */
+function leave() {
+  if (!dirty()) return true;
+  if (!confirm(`Discard your unsaved edits to ${cur.name}?`)) return false;
+  editor.value = cur.text;
+  edited();
+  return true;
+}
+
+async function save() {
+  if (!dirty()) return;
+  const text = editor.value;
+  try { await invoke("save", { path: cur.path, raw: cur.crlf ? text.replace(/\n/g, "\r\n") : text }); }
+  catch (e) { return toast(`Can’t save ${cur.name}: ${why(e)}`); }
+  cur.text = text;
+  edited();
 }
 
 function fixMedia(root, dir) {
@@ -55,7 +74,8 @@ function fixMedia(root, dir) {
 // A big file arrives in slices instead of freezing the window while it lays out.
 function fill(el, html, dir, done) {
   const job = el.fillJob = (el.fillJob || 0) + 1, tpl = document.createElement("template");
-  tpl.innerHTML = html;
+  // Raw HTML in the file is untrusted: no scripts, handlers or forms, and no styles that could restyle the app.
+  tpl.innerHTML = DOMPurify.sanitize(html, { FORBID_TAGS: ["style", "form"], FORBID_ATTR: ["style"] });
   if (dir) fixMedia(tpl.content, dir);
   el.replaceChildren();
   const step = () => {
@@ -67,21 +87,22 @@ function fill(el, html, dir, done) {
 }
 
 async function open(path, base) {
+  if (!leave()) return;
   let r;
   try { r = await invoke("load", { path, base: base ?? null }); }
   catch (e) {
-    // Rust sends "<full path>: <reason> (os error N)"; the file name and reason are what a reader needs.
-    const why = String(e).replace(/^.*: /, "").replace(/ \(os error \d+\)$/, "");
     const name = String(path).split(/[\\/]/).pop();
-    return cur ? toast(`Can’t open ${name}: ${why}`) : showError(`Can’t open ${name}`, why);
+    return cur ? toast(`Can’t open ${name}: ${why(e)}`) : showError(`Can’t open ${name}`, why(e));
   }
 
   const same = cur && cur.path === r.path;
   const top = same ? scroller.scrollTop : 0;
-  cur = r;
+  cur = { ...r, text: r.raw.replace(/\r\n/g, "\n"), crlf: r.raw.includes("\r\n") };
   fill(preview, r.html, r.dir, () => { scroller.scrollTop = top; });
-  sourceStale = true;
-  if (body.dataset.view === "source") renderSource(r.raw);
+  // Leave the editor alone when the text is unchanged (our own save reloading), so the caret stays put.
+  if (editor.value !== cur.text) editor.value = cur.text;
+  edited();
+  previewStale = false;
   body.dataset.state = "ready";
 
   const parts = r.dir.split(/[\\/]/).filter(Boolean);
@@ -100,8 +121,12 @@ function setView(view) {
     preview.hidden = src; source.hidden = !src;
     $("tab-preview").setAttribute("aria-selected", String(!src));
     $("tab-source").setAttribute("aria-selected", String(src));
-    if (src && sourceStale && cur) renderSource(cur.raw);
+    if (!src && previewStale && cur) {
+      previewStale = false;
+      invoke("render", { raw: editor.value }).then((h) => fill(preview, h, cur.dir, () => {}));
+    }
     scroller.scrollTop = 0;
+    if (src) editor.focus({ preventScroll: true });
     scroller.classList.remove("swap");
   };
   body.dataset.view = view; // slides the pill immediately
@@ -173,6 +198,7 @@ try { if (localStorage.getItem("side") === "collapsed") toggleSide(true); } catc
 
 // Files, drops and the command line can hand over a file or a folder; a single file closes the folder panel.
 async function openAny(path) {
+  if (!leave()) return;
   let t = null;
   try { t = await invoke("tree", { path }); } catch { /* unreadable: open() reports it */ }
   if (!t) { setFolder(null); return open(path); }
@@ -185,12 +211,15 @@ async function openAny(path) {
   $("name").textContent = t.name;
 }
 
-function zoom(delta) {
-  const z = delta === 0 ? 1 : Math.min(2, Math.max(0.6, +(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--zoom")) + delta).toFixed(2)));
-  document.documentElement.style.setProperty("--zoom", z);
-  try { localStorage.setItem("zoom", z); } catch { /* storage unavailable: zoom just won't persist */ }
+/** Steps a :root number (--zoom: type size, --width: page width in rem); delta 0 resets it. */
+function step(name, delta, min, max, reset) {
+  const v = delta === 0 ? reset : Math.min(max, Math.max(min, +(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--" + name)) + delta).toFixed(2)));
+  document.documentElement.style.setProperty("--" + name, v);
+  try { localStorage.setItem(name, v); } catch { /* storage unavailable: it just won't persist */ }
 }
-try { const z = localStorage.getItem("zoom"); if (z) document.documentElement.style.setProperty("--zoom", z); } catch { /* ignore */ }
+for (const name of ["zoom", "width"]) {
+  try { const v = localStorage.getItem(name); if (v) document.documentElement.style.setProperty("--" + name, v); } catch { /* ignore */ }
+}
 
 // ---- events ----
 $("tab-preview").onclick = () => setView("preview");
@@ -211,10 +240,13 @@ addEventListener("keydown", (e) => {
   if (e.key === "/") { setView(body.dataset.view === "source" ? "preview" : "source"); }
   else if (e.key === "o") pick();
   else if (e.key === "O") pickFolder();
+  else if (e.key === "s") save();
   else if (e.key === "b" && folder) toggleSide();
-  else if (e.key === "=" || e.key === "+") zoom(0.1);
-  else if (e.key === "-") zoom(-0.1);
-  else if (e.key === "0") zoom(0);
+  else if (e.key === "=" || e.key === "+") step("zoom", 0.1, 0.6, 2, 1);
+  else if (e.key === "-") step("zoom", -0.1, 0.6, 2, 1);
+  else if (e.key === "0") step("zoom", 0, 0.6, 2, 1);
+  else if (e.key === "]") step("width", 6, 36, 240, 64);
+  else if (e.key === "[") step("width", -6, 36, 240, 64);
   else return;
   e.preventDefault();
 });
@@ -225,7 +257,7 @@ preview.addEventListener("click", (e) => {
   e.preventDefault();
   const href = a.getAttribute("href");
   if (href.startsWith("#")) {
-    const t = document.getElementById(decodeURIComponent(href.slice(1)));
+    const t = preview.querySelector("#" + CSS.escape(decodeURIComponent(href.slice(1))));
     if (t) t.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
   } else if (/^(https?:|mailto:)/i.test(href)) {
     invoke("open_external", { url: href });
@@ -236,7 +268,11 @@ preview.addEventListener("click", (e) => {
 
 let reloadTimer;
 // A save fires several fs events; reload once after they settle.
-T.listen("file-changed", () => { clearTimeout(reloadTimer); reloadTimer = setTimeout(() => cur && open(cur.path), 80); });
+// With unsaved edits the editor wins; saving then overwrites the file.
+T.listen("file-changed", () => { clearTimeout(reloadTimer); reloadTimer = setTimeout(() => cur && !dirty() && open(cur.path), 80); });
+editor.addEventListener("input", edited);
+// Electron reads a set returnValue as "keep the window"; main then asks whether to close anyway.
+addEventListener("beforeunload", (e) => { if (dirty()) e.returnValue = false; });
 T.listen("open-file", openAny);
 // preventDefault on dragover/drop stops the window from navigating to the dropped file.
 addEventListener("dragover", (e) => { e.preventDefault(); body.classList.add("dragging"); });

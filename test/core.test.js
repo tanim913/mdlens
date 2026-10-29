@@ -17,9 +17,9 @@ test("gfm features", () => {
   assert.match(h, /<a href="#fn1" id="fnref1">1<\/a>/);
 });
 
-test("raw html stays escaped", () => {
-  const h = render("<script>alert(1)</script>\n\n[x](javascript:alert(1))");
-  assert.ok(!h.includes("<script"));
+test("raw html passes through for the window to sanitize, markdown links stay safe", () => {
+  const h = render("<table><tr><td>\n\n```py\nx\n```\n\n</td></tr></table>\n\n[x](javascript:alert(1))");
+  assert.match(h, /<td>\n<pre><code class="language-py">x/);
   assert.ok(!h.includes('href="javascript:'));
 });
 

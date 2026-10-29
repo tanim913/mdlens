@@ -3,8 +3,8 @@ const fs = require("fs");
 const path = require("path");
 const MarkdownIt = require("markdown-it");
 
-// html: false keeps raw HTML in the source escaped: .md files are untrusted input.
-const md = new MarkdownIt({ html: false, linkify: true })
+// Raw HTML passes through (side-by-side tables, <details>); .md files are untrusted, so the window sanitizes it with DOMPurify.
+const md = new MarkdownIt({ html: true, linkify: true })
   .use(require("markdown-it-footnote"))
   .use(require("markdown-it-task-lists"));
 // Fuzzy linking would turn "README.md" (.md is a TLD) into a web link.

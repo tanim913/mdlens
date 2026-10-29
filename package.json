@@ -1,6 +1,6 @@
 {
   "name": "mdlens",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A light Markdown viewer: opens .md files rendered, one key to the source",
   "main": "main.js",
   "license": "MIT",
@@ -13,6 +13,7 @@
     "dist:win": "electron-builder --win nsis"
   },
   "dependencies": {
+    "dompurify": "^3.4.17",
     "markdown-it": "^15.0.3",
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-task-lists": "^2.1.1"

@@ -40,7 +40,10 @@
 <main class="page">
   <div class="scroll" id="scroll">
     <article id="preview" class="prose" tabindex="-1"></article>
-    <pre id="source" class="src" tabindex="-1" hidden></pre>
+    <div id="source" class="src" hidden>
+      <pre id="gutter" aria-hidden="true"></pre>
+      <textarea id="editor" spellcheck="false" wrap="off" aria-label="Markdown source"></textarea>
+    </div>
     <section id="empty" class="empty">
       <h1 id="empty-title">Open a Markdown file</h1>
       <p id="empty-text">Drop a <code>.md</code> file or a folder here, or press <kbd>Ctrl</kbd> <kbd>O</kbd>.</p>
@@ -53,6 +56,7 @@
 </main>
 
 <div id="toast" role="status" aria-live="polite"></div>
+<script src="../node_modules/dompurify/dist/purify.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
