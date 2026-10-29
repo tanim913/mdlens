@@ -22,7 +22,7 @@ jobs:
             target: --win nsis
             files: dist/*.exe
           - os: macos-latest
-            target: --mac dmg
+            target: --mac dmg --arm64 --x64
             files: dist/*.dmg
     runs-on: ${{ matrix.os }}
     steps:
